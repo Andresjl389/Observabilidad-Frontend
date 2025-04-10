@@ -1,0 +1,12 @@
+@import '../../../../../index.css';
+
+.texts{
+    font-family: var(--font-family);
+    color: var(--neutral-grey-color);
+    margin: 0;
+}
+
+.button{
+    color: var(--neutral-white-color);
+    margin: 0;
+}

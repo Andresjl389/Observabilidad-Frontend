@@ -1,0 +1,1 @@
+export { default as TableScreen } from './table'

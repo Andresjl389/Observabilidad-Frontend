@@ -1,0 +1,27 @@
+.info{
+    display: flex;
+    background-color: var(--neutral-silver-color);
+    padding: 30px;
+}
+
+.infoReverse{
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 30px;
+}
+
+.imgInfo{
+    width: 70vw;
+    height: 40vh;
+    object-fit: contain;
+    flex: 1;
+}
+
+.infoContainer{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+}
+

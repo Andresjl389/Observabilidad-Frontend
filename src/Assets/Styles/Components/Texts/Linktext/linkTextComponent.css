@@ -1,0 +1,29 @@
+@import '../../../../../index.css';
+
+
+.linkText{
+    color: var(--primary-color);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-family);
+    font-weight: 600;
+}
+.linkText:link{
+    color: var(--primary-color);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-family);
+    font-weight: 600;
+}
+
+.linkText:visited{
+    color: var(--primary-color);
+}
+.linkText:hover{
+    color: var(--shade1-color);
+}
+

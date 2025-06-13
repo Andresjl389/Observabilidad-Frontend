@@ -1,4 +1,4 @@
-import { Select, MenuItem, SelectChangeEvent } from "@mui/material";
+import { Select, MenuItem, SelectChangeEvent, FormHelperText, FormControl } from "@mui/material";
 import * as FaIcons from "react-icons/fa";
 import { TextSemiBoldComponent } from "../../../Texts";
 import { useState } from "react";
@@ -15,46 +15,61 @@ const allFaIcons = Object.entries(FaIcons)
 
 type Props = {
   text: string;
-  onSelect: (icon: string) => void; // Para manejar la selección del ícono
+  onSelect: (icon: string) => void;
 };
 
 const AllIconsSelectComponent = ({ text, onSelect }: Props) => {
   const [selectedIcon, setSelectedIcon] = useState("");
+  const [error, setError] = useState(false);
 
   const handleChange = (event: SelectChangeEvent) => {
     const selected = event.target.value;
     setSelectedIcon(selected);
-    onSelect(selected); // Pasa el valor seleccionado al padre
+    setError(false); // limpia el error si ya se seleccionó algo
+    onSelect(selected);
+  };
+
+  const handleBlur = () => {
+    if (!selectedIcon) {
+      setError(true); // activa el error si no hay selección
+    }
   };
 
   return (
     <div className="InputContainer">
       <TextSemiBoldComponent text={text} size={16} weight="300" />
-      <Select
-        value={selectedIcon}
-        onChange={handleChange}
-        className="SelectComponent"
+      <FormControl
+        fullWidth
         variant="standard"
-        style={{
-          paddingLeft: 20,
-          borderBottom: "2px solid var(--primary-color)",
-          borderRadius: "10px",
-        }}
-        sx={{
-          "&:before": { borderBottom: "none" },
-          "&:after": { borderBottom: "none" },
-          "&:hover:not(.Mui-disabled):before": { borderBottom: "none" },
-        }}
+        error={error}
+        onBlur={handleBlur}
       >
-        <MenuItem value="" disabled>
-          Selecciona un ícono
-        </MenuItem>
-        {allFaIcons.map(({ name, Icon }) => (
-          <MenuItem key={name} value={name}>
-            {Icon ? <Icon size={20} style={{ marginRight: 8 }} /> : null} {name}
+        <Select
+          value={selectedIcon}
+          onChange={handleChange}
+          displayEmpty
+          style={{
+            paddingLeft: 20,
+            borderBottom: "2px solid var(--primary-color)",
+            borderRadius: "10px",
+          }}
+          sx={{
+            "&:before": { borderBottom: "none" },
+            "&:after": { borderBottom: "none" },
+            "&:hover:not(.Mui-disabled):before": { borderBottom: "none" },
+          }}
+        >
+          <MenuItem value="" disabled>
+            Selecciona un ícono
           </MenuItem>
-        ))}
-      </Select>
+          {allFaIcons.map(({ name, Icon }) => (
+            <MenuItem key={name} value={name}>
+              {Icon && <Icon size={20} style={{ marginRight: 8 }} />} {name}
+            </MenuItem>
+          ))}
+        </Select>
+        {error && <FormHelperText>Este campo es obligatorio</FormHelperText>}
+      </FormControl>
     </div>
   );
 };

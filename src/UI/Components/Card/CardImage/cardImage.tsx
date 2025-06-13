@@ -12,7 +12,7 @@ const CardImageComponent = ({image, text, link}:Props) => {
         <>
             <div className="cardImageContainer">
                 <div className='imageContainer'>
-                    <img className="cardImage" src={image} />
+                    <img className="cardImage" src={image} alt='card-image'/>
                 </div>
                 <div className='infoCardContainer'>
                     <TextSemiBoldComponent text={text}/>

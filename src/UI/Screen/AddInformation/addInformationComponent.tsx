@@ -1,13 +1,13 @@
 import {
   FooterCompoent,
   FormComponent,
-  HeaderComponent,
+  HeaderLoginComponent,
 } from "../../Components";
 const AddInformationComponent = () => {
 
   return (
     <>
-      <HeaderComponent />
+      <HeaderLoginComponent Button={false} />
       <FormComponent />
       <FooterCompoent />
     </>

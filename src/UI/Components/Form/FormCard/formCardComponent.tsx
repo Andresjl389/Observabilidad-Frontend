@@ -10,6 +10,9 @@ import { PostInfo } from "../../../../interfaces/PostInfo";
 import PostInfoService from "../../../../service/info/PostInfoService";
 import { useNavigate } from "react-router-dom";
 import { CommonButton } from "../../Buttons";
+import { useAuth } from "../../../../Context/Auth/AuthContext";
+import { SuccessModal } from "../../Modal";
+import { toast } from "react-toastify";
 
 type Props = {
   name: string;
@@ -18,10 +21,10 @@ type Props = {
 };
 
 const FormCardComponent = ({ children, name, id }: Props) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate()
-  const [isLoading, setIsLoading] = useState(false);
+  const { token } = useAuth();
   const [formData, setFormData] = useState<PostInfo>({
-    user_id: "340e887e-67f2-4a89-b9b0-aed8b28c6c10",
     type_id: id,
     title: null,
     description: null,
@@ -46,16 +49,44 @@ const FormCardComponent = ({ children, name, id }: Props) => {
     setFormData((prev) => ({ ...prev, filename: file }));
   };
 
-  const handleSubmit = async () => {
-    try {
-      const response = await PostInfoService(formData);
-      console.log("Respuesta del backend:", response.data);
-      navigate('/')
-    } catch (error) {
-      console.error("Error al enviar la petición:", error);
-    } finally {
+const handleSubmit = async () => {
+  // Validaciones básicas según tipo
+  if (name === "Información herramientas observabilidad") {
+    if (!formData.icon || !formData.title || !formData.description) {
+      toast.error("Por favor, completa todos los campos requeridos.");
+      return;
     }
-  };
+  }
+
+  if (name === "Tarjeta con imagen") {
+    if (!formData.link || !formData.description || !formData.filename) {
+      toast.error("Por favor, completa todos los campos requeridos.");
+      return;
+    }
+  }
+
+  if (name === "Herramientas observabilidad") {
+    if (!formData.filename) {
+      toast.error("Por favor, agrega una imagen.");
+      return;
+    }
+  }
+
+  if (name === "Información relevante") {
+    if (!formData.title || !formData.description || !formData.filename) {
+      toast.error("Por favor, completa todos los campos requeridos.");
+      return;
+    }
+  }
+
+  try {
+    await PostInfoService(formData, token);
+    setIsModalOpen(true);
+  } catch (error) {
+    console.error("Error al enviar la petición:", error);
+    toast.error("Error al enviar la información. Intenta nuevamente.");
+  }
+};
 
   useEffect(() => {
     if (id) {
@@ -104,13 +135,13 @@ const FormCardComponent = ({ children, name, id }: Props) => {
           <>
             <InputTextComponent text="Link" onChange={handleChange("link")} />
             <InputLongTextComponent text="Descripción" onChange={handleChange("description")} />
-            <InputImageComponent onImageUpload={handleImageUpload} />
+            <InputImageComponent onImageUpload={handleImageUpload} text="Añade una imagen de muestra" />
           </>
         )}
 
         {name === "Herramientas observabilidad" && (
           <>
-            <InputImageComponent onImageUpload={handleImageUpload} />
+            <InputImageComponent onImageUpload={handleImageUpload} text="Ícono de la herramienta"/>
           </>
         )}
 
@@ -118,7 +149,7 @@ const FormCardComponent = ({ children, name, id }: Props) => {
           <>
             <InputTextComponent text="Titulo" onChange={handleChange("title")} />
             <InputLongTextComponent text="Descripción" onChange={handleChange("description")} />
-            <InputImageComponent onImageUpload={handleImageUpload} />
+            <InputImageComponent onImageUpload={handleImageUpload} text="Agrega una imagen de lo que quieres mostrar"/>
           </>
         )}
         {
@@ -127,6 +158,10 @@ const FormCardComponent = ({ children, name, id }: Props) => {
           ) : null
         }
       </div>
+      <SuccessModal isOpen={isModalOpen} onClose={() => {
+        setIsModalOpen(false)
+        navigate('/main')
+        }} />
     </>
   );
 };

@@ -8,7 +8,8 @@ const GetTypes = async() => {
         const response = await axios.get(`${environment.app_url}/types`, {
             headers,
           });
-        return response.data.Types;
+          
+        return response.data;
     } catch (error) {
         console.log("Error desde el service: ", error);
     }

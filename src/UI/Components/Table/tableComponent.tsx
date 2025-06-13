@@ -14,8 +14,12 @@ import { ButtonSelectComponent } from "./Components/ButtonSelect";
 import { Info } from "../../../interfaces/info";
 import GetAll from "../../../service/info/getAll";
 import { IconContainerComponent } from "../ImagesContainer/IconComponent/IconsC";
-import { GetTypes } from "../../../service";
+import { deleteInfo, GetTypes } from "../../../service";
 import { Types } from "../../../interfaces/types";
+import { SquarePen, Trash2 } from "lucide-react";
+import { useAuth } from "../../../Context/Auth/AuthContext";
+import { UUID } from "crypto";
+import { SuccessModal } from "../Modal";
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
@@ -43,11 +47,28 @@ const TableComponent = () => {
   const [types, setTypes] = useState<Types[]>([]);
   const [info, setInfo] = useState<Info[]>([]);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const { token } = useAuth();
+
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setItemsToShow(parseInt(event.target.value));
   };
 
-  
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+    setPage(1); // Reset to first page when searching
+  };
+
+  const filteredInfo = info.filter((item) => {
+    const title = item.title?.toLowerCase() ?? "";
+    const description = item.description?.toLowerCase() ?? "";
+    const term = searchTerm.toLowerCase();
+
+    return title.includes(term) || description.includes(term);
+  });
+
   const handleInfo = async () => {
     const data = await GetAll();
     if (Array.isArray(data)) {
@@ -57,6 +78,23 @@ const TableComponent = () => {
       console.error("La respuesta no es un array:", data);
     }
   };
+
+  const handleDelete = async (info_id: UUID) => {
+  try {
+    const response = await deleteInfo(token, info_id);
+    console.log(response)
+
+    if (response?.status === 200) {
+      setIsModalOpen(true);
+    } else {
+      console.error("Error al eliminar:", response);
+      // Aquí podrías mostrar un modal de error si tienes uno
+    }
+  } catch (error) {
+    console.error("Excepción en la eliminación:", error);
+    // Aquí también podrías mostrar un modal de error
+  }
+};
 
   useEffect(() => {
     const fetchTypes = async () => {
@@ -69,18 +107,13 @@ const TableComponent = () => {
   }, []);
 
   const getTypeName = (id: string): string => {
-    // const found = types.find((type) => type.id === id);
-    let name = ''
-    console.log(types)
-    // if(types.id === id ){
-    //     name = types.name
-    // }
-    return name || "Desconocido";
+    const found = types.find((type) => type.id === id);
+    return found ? found.name : "Desconocido";
   };
 
   const startIndex = (page - 1) * itemsToShow;
-  const totalPages = Math.ceil(info.length / itemsToShow);
-  const visibleRows = info.slice(startIndex, startIndex + itemsToShow);
+  const totalPages = Math.ceil(filteredInfo.length / itemsToShow);
+  const visibleRows = filteredInfo.slice(startIndex, startIndex + itemsToShow);
 
   useEffect(() => {
     setPage(1);
@@ -92,7 +125,11 @@ const TableComponent = () => {
 
   return (
     <>
-      <SearchComponent onSelect={handleSelect} />
+      <SearchComponent
+        onSelect={handleSelect}
+        onSearch={handleSearch}
+        searchValue={searchTerm}
+      />
       <section className="SectionTableContainer">
         <TableContainer component={Paper} style={{ width: "90vw" }}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -120,11 +157,17 @@ const TableComponent = () => {
                     )}
                   </StyledTableCell>
                   <StyledTableCell>{row.title}</StyledTableCell>
-                  <StyledTableCell>{getTypeName(row.id)}</StyledTableCell>
+                  <StyledTableCell>{getTypeName(row.type_id)}</StyledTableCell>
                   <StyledTableCell>{row.description}</StyledTableCell>
                   <StyledTableCell>{row.icon}</StyledTableCell>
                   <StyledTableCell>{row.link}</StyledTableCell>
-                  <StyledTableCell>editar eliminar</StyledTableCell>
+                  <StyledTableCell>
+                    <SquarePen className="editIcon" />{" "}
+                    <Trash2
+                      className="deleteIcon"
+                      onClick={() => handleDelete(row.id)}
+                    />
+                  </StyledTableCell>
                 </StyledTableRow>
               ))}
             </TableBody>
@@ -136,8 +179,15 @@ const TableComponent = () => {
         setPage={setPage}
         totalPages={totalPages}
       />
-
-      <TextSemiBoldComponent text="HOLAAA" />
+      <SuccessModal
+        isOpen={isModalOpen}
+        title="Datos eliminados correctamente"
+        message="La información que eliminaste ya no estará publicada y visible para el equipo."
+        onClose={() => {
+          setIsModalOpen(false);
+          handleInfo()
+        }}
+      />
     </>
   );
 };

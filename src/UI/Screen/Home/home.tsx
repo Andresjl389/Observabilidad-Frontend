@@ -16,9 +16,9 @@ import { GetInfo, GetTypes } from "../../../service";
 import { Info } from "../../../interfaces/info";
 import { useEffect, useState } from "react";
 import { Types } from "../../../interfaces/types";
-import { IconContainerComponent } from '../../Components/ImagesContainer/IconComponent/IconsC'
+import { IconContainerComponent } from "../../Components/ImagesContainer/IconComponent/IconsC";
 
-const Main = () => {
+const Home = () => {
   const [cardImageInfo, setcardImageInfo] = useState<Info[]>([]);
   const [info, setInfo] = useState<Info[]>([]);
   const [cardInfo, setCardInfo] = useState<Info[]>([]);
@@ -32,68 +32,77 @@ const Main = () => {
   useEffect(() => {
     if (types?.length > 0) {
       handleInfo();
-      handleCardImageInfo()
-      handleCardInfo()
-      handleStack()
+      handleCardImageInfo();
+      handleCardInfo();
+      handleStack();
     }
   }, [types]);
 
-  const getId = (name: string) =>  {
-    let id: string = '';
+  const getId = (name: string) => {
+    let id: string = "";
     types.forEach((type) => {
       if (type.name === name) {
         id = type.id;
       }
     });
     return id;
-  }
+  };
 
   const handleCardImageInfo = async () => {
-    const id = getId('Tarjeta con imagen')
+    const id = getId("Tarjeta con imagen");
     const data = await GetInfo(id);
     setcardImageInfo(data);
   };
   const handleInfo = async () => {
-    const id = getId('Información relevante')
+    const id = getId("Información relevante");
     const data = await GetInfo(id);
     setInfo(data);
   };
   const handleCardInfo = async () => {
-    const id = getId('Información herramientas observabilidad')
+    const id = getId("Información herramientas observabilidad");
     const data = await GetInfo(id);
     setCardInfo(data);
   };
   const handleStack = async () => {
-    const id = getId('Herramientas observabilidad')
+    const id = getId("Herramientas observabilidad");
     const data = await GetInfo(id);
     setstack(data);
   };
 
   const handleInfoType = async () => {
-    const data = await GetTypes()
-    setTypes(data)
-  }
-  
+    const data = await GetTypes();
+    setTypes(data);
+  };
 
+  const handleScrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <>
       <SectionComponent>
-        <HeaderComponent />
+        <HeaderComponent
+          Button={true}
+          url="/login"
+          onNavigateToSection={handleScrollToSection}
+        />
         <section className="introductorySection">
           <div className="introductionSection--moreInfo">
             <TitleSectionComponent
               blackText="Observabilidad y"
               redText="Analítica TI"
             />
-            <CommonButton title="About Us" url="/add-information"/>
+            <CommonButton title="About Us" url="/login" />
           </div>
-          <img src={firstImg} />
+          <img src={firstImg} alt="first" />
         </section>
       </SectionComponent>
       {stack?.length > 0 && (
         <>
-          <section className="platformSection">
+          <section className="platformSection" id="stack">
             <TextSemiBoldComponent
               text="Plataformas de observabilidad"
               size={25}
@@ -131,16 +140,18 @@ const Main = () => {
 
       {info?.length > 0 &&
         info?.map((item, index) => (
-          <InfoComponent
-            key={item.id}
-            title={item.title}
-            description={item.description}
-            img={item.filepath}
-            index={index}
-          />
+          <section id="info">
+            <InfoComponent
+              key={item.id}
+              title={item.title}
+              description={item.description}
+              img={item.filepath}
+              index={index}
+            />
+          </section>
         ))}
       {cardImageInfo?.length > 0 && (
-        <section className="sectionCardImage">
+        <section className="sectionCardImage" id="pages">
           {cardImageInfo?.map((item) => (
             <CardImageComponent
               image={item.filepath}
@@ -157,4 +168,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default Home;

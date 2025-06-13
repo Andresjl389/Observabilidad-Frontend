@@ -23,6 +23,10 @@
   --neutral-grey_blue--color: #ABBED1;
   --neutral-silver-color: #F5F7FA;
   --neutral-white-color: #FFFFFF;
+  --light-gray: #f5f5f5;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --gray: #e1e1e1;
+
 
   --font-family: "Inter", sans-serif;
 }

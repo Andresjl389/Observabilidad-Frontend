@@ -7,7 +7,7 @@ type Props = {
 const IconContainerComponent = ({src}:Props) => {
     return(
         <>
-                <img className="Img" src={src}/> 
+                <img className="Img" src={src} alt='icon'/> 
         </>
     )
 }

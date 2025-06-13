@@ -8,7 +8,7 @@ const GetAll = async() => {
         const response = await axios.get(`${environment.app_url}/info`, {
             headers,
           });
-        return response.data.info;
+        return response.data;
     } catch (error) {
         console.log("Error desde el service: ", error);
     }

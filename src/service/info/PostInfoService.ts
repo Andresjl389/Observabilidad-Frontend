@@ -2,10 +2,9 @@ import axios, { AxiosError } from "axios";
 import { environment } from "../../environment/local";
 import { PostInfo } from "../../interfaces/PostInfo";
 
-const PostInfoService = async (formData: PostInfo) => {
+const PostInfoService = async (formData: PostInfo, token: string | null) => {
   const data = new FormData();
       data.append("type_id", formData.type_id);
-      data.append("user_id", formData.user_id);
   
       if (formData.title?.trim()) data.append("title", formData.title);
       if (formData.description?.trim())
@@ -16,7 +15,10 @@ const PostInfoService = async (formData: PostInfo) => {
         data.append("file", formData.filename);
   try {
     const response = await axios.post(`${environment.app_url}/info`, data, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "Authorization": `Bearer ${token}`
+      },
     });
     return response.data;
   } catch (error) {

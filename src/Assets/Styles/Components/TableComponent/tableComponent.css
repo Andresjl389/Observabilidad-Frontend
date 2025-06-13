@@ -88,3 +88,12 @@
 .TextPrevNext{
     cursor: pointer;
 }
+
+.editIcon:hover{
+  color: #2E7D31;
+  cursor: pointer;
+}
+.deleteIcon:hover{
+  color: #E53835;
+  cursor: pointer;
+}

@@ -7,7 +7,7 @@ const FooterCompoent = () => {
     <>
       <footer className="footerContainer">
         <div className="iconContainer">
-          <img src={logo} />
+          <img src={logo} alt="Logo observabilidad"/>
           <TitleComponent text="GRP Observabilidad" />
         </div>
         <div className="contactSection">

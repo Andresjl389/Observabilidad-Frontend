@@ -1,5 +1,7 @@
+import { UUID } from "crypto"
+
 export interface Info {
-    id: string
+    id: UUID
     user_id: string
     type_id: string
     title: string

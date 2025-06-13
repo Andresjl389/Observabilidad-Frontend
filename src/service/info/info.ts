@@ -11,7 +11,7 @@ const GetInfo = async(type_id: string) => {
             params
 
           });
-        return response.data.Info;
+        return response.data;
     } catch (error) {
         console.log("Error desde el service: ", error);
     }

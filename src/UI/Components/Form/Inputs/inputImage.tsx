@@ -4,9 +4,10 @@ import UploadIcon from "../../../../Assets/Images/uploadIcon.svg";
 
 type Props = {
   onImageUpload: (imageData: string, filename: string, file: File) => void;
+  text: string
 };
 
-const InputImageComponent = ({onImageUpload}:Props) => {
+const InputImageComponent = ({onImageUpload, text}:Props) => {
   const [image, setImage] = useState<string | null>(null);
   const [filename, setFilename] = useState<string>("");
 
@@ -26,15 +27,15 @@ const InputImageComponent = ({onImageUpload}:Props) => {
 
   return (
     <div className="InputContainer">
-      <TextSemiBoldComponent text="Ícono de la herramienta" size={16} weight="300" />
+      <TextSemiBoldComponent text={text} size={16} weight="300" />
       <div className="ImageInputContainer">
         <label htmlFor="imageUpload" className="image-upload-label">
           {image ? (
-            <img src={image} alt="Preview" className="image-preview" />
+            <img src={image} alt="Preview" className="image-preview"/>
           ) : (
             <div className="upload-placeholder">
               <TextSemiBoldComponent text="Subir imagen" size={16} weight="600" />
-              <img src={UploadIcon} alt="Upload Icon" />
+              <img src={UploadIcon} alt="Upload Icon"/>
             </div>
           )}
         </label>
@@ -45,6 +46,7 @@ const InputImageComponent = ({onImageUpload}:Props) => {
         accept="image/*"
         onChange={handleImageChange}
         style={{ display: "none" }}
+        required={true}
       />
     </div>
   );

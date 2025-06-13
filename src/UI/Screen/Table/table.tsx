@@ -1,10 +1,10 @@
-import { FooterCompoent, HeaderComponent, TableComponent } from "../../Components";
+import { FooterCompoent, HeaderLoginComponent, TableComponent } from "../../Components";
 import '../../../Assets/Styles/UI/Table/table.css'
 
 const TableScreen = () => {
   return (
     <>
-      <HeaderComponent />
+      <HeaderLoginComponent Button={false} />
         <section className="TableSection">
         <TableComponent />
 

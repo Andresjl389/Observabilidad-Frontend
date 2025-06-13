@@ -1,4 +1,4 @@
-import { redirect, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import '../../../../Assets/Styles/Components/Buttons/CommonButton/commonButton.css'
 import { CommonText } from '../../Texts'
 

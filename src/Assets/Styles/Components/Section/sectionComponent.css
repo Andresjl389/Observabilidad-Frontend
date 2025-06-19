@@ -1,0 +1,6 @@
+@import '../../../../index.css';
+
+.section{
+    background-color: var(--neutral-silver-color);
+    font-family: var(--font-family);
+}

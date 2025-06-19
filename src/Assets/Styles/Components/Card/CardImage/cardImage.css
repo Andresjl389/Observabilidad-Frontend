@@ -1,0 +1,48 @@
+
+
+.cardImage{
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    height: 100%;
+    width: 100%;
+    
+}
+.imageContainer{
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+}
+
+.cardImageContainer {
+    position: relative; /* Permite posicionar elementos hijos */
+    width: 250px;
+    max-height: 250px;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.infoCardContainer {
+    position: absolute;
+    bottom: -0px; /* Aumenta la separación */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--neutral-silver-color);
+    width: 75%;
+    max-height: 250px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 20px 0;
+    gap: 10px;
+}

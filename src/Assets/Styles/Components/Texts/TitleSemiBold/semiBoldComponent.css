@@ -1,0 +1,7 @@
+@import '../../../../../index.css';
+
+.TitleTextSemiBold{
+    font-family: var(--font-family);
+    color: var(--netral-D_Gray-color);
+    margin: 0;
+}

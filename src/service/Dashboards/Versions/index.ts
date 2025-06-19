@@ -1,0 +1,1 @@
+export { default as GetVersions } from './version'

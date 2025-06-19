@@ -1,0 +1,1 @@
+export { default as PieDashboardComponent } from './pieDashboard'

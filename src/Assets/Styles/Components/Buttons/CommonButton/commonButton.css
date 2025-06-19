@@ -1,0 +1,20 @@
+@import '../../../../../index.css';
+.buttons{
+    background-color: var(--primary-color);
+    width: 10vw;
+    height: 5vh;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+}
+
+.buttons:hover{
+    background-color: var(--shade1-color);
+    cursor: pointer;
+}
+
+.buttons:active{
+    background-color: var(--shade2-color);
+}

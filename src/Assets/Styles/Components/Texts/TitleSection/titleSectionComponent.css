@@ -1,0 +1,10 @@
+@import '../../../../../index.css';
+.Black{
+    color: var(--neutral-grey-color);
+    margin: 0;
+}
+
+.Red{
+    color: var(--primary-color);
+    margin: 0;
+}

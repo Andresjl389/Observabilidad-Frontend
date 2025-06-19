@@ -1,0 +1,1 @@
+export { default as GetDisponibilidad } from './disponibilidad'

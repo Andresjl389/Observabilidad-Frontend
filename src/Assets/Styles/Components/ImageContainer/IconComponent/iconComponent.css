@@ -1,0 +1,7 @@
+.Img{
+    object-fit: contain;
+    width: 64px;
+    height: 64px;
+    min-width: 100px;
+    padding: 3%;
+}

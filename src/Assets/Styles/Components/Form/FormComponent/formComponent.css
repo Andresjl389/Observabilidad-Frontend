@@ -1,0 +1,71 @@
+.FormSection{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.TitleContainer{
+    display: flex;
+    flex-direction: column;
+    max-width: 50vw;
+}
+
+.SelectComponent{
+    width: 100%;
+}
+
+.FormCard{
+    width: 50vw;
+    margin: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--netral-D_Gray-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.CardText{
+    padding: 20px;
+    width: 80%;
+}
+
+.InputContainer{
+    width: 80%;
+    margin-bottom: 30px;
+}
+
+.image-upload-label{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: var(--neutral-white-color);
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 50%;
+    border: 2px solid var(--primary-color);
+    margin-top: 20px;
+}
+
+.upload-placeholder{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-preview{
+    object-fit: contain;
+    width: 100%;
+}
+
+.ImageInputContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

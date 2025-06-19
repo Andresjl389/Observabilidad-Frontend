@@ -1,0 +1,99 @@
+
+.SearchSection{
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.SearchSelect{
+    background-color: var(--neutral-silver-color);
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.ShowSelectContainer{
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.SearchInput{
+    border-radius: 7px;
+    padding: 5px;
+    border: 1px solid var(--netral-D_Gray-color);
+    width: 30vw;
+}
+
+.SearchInputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .SearchIcon {
+    position: absolute;
+    left: 10px;
+    color: gray;
+  }
+  
+  .SearchInput {
+    padding-left: 30px; /* deja espacio para el ícono */
+  }
+  
+  .SectionTableContainer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+  }
+
+  .ButtonsPrevNextContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+
+  .ButtonSelected{
+    background-color: var(--primary-color);
+    border: none;
+    padding: 5px;
+    min-height: 40px;
+    min-width: 40px;
+    color: var(--neutral-silver-color);
+    border-radius: 10px;
+  }
+  .ButtonSelected:active{
+    background-color: var(--shade1-color);
+  }
+  .ButtonSelect{
+    background-color: var(--neutral-grey-color);
+    border: none;
+    padding: 5px;
+    min-height: 40px;
+    min-width: 40px;
+    color: var(--neutral-silver-color);
+    border-radius: 10px;
+  }
+  .ButtonSelect:active{
+    background-color: var(--netral-D_Gray-color);
+  }
+
+.TextPrevNext{
+    cursor: pointer;
+}
+
+.editIcon:hover{
+  color: #2E7D31;
+  cursor: pointer;
+}
+.deleteIcon:hover{
+  color: #E53835;
+  cursor: pointer;
+}

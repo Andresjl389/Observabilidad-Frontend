@@ -152,6 +152,13 @@ const handleSubmit = async () => {
             <InputImageComponent onImageUpload={handleImageUpload} text="Agrega una imagen de lo que quieres mostrar"/>
           </>
         )}
+        {name === "Videos" && (
+          <>
+            <InputTextComponent text="Titulo" onChange={handleChange("title")} />
+            <InputLongTextComponent text="Descripción" onChange={handleChange("description")} />
+            <InputTextComponent text="Link" onChange={handleChange("link")} />
+          </>
+        )}
         {
           formData.type_id ? (
             <CommonButton title="Enviar" onClick={handleSubmit} />

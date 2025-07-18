@@ -1,3 +1,4 @@
+import { ReactElement } from "react";
 import "../../../../Assets/Styles/Components/Texts/CommonText/CommonTextComponent.css";
 
 type Props = {
@@ -6,9 +7,10 @@ type Props = {
   size?: number;
   color?: boolean;
   onClick?: () => void;
+  children?: ReactElement
 };
 
-const CommonText = ({ text, styles, size, color, onClick }: Props) => {
+const CommonText = ({ text, styles, size, color, onClick, children }: Props) => {
   return (
     <>
       <p
@@ -18,9 +20,13 @@ const CommonText = ({ text, styles, size, color, onClick }: Props) => {
           fontSize: size ? `${size}px` : "none",
           color: color ? "#FFFFFF" : "",
           cursor: onClick ? "pointer" : "",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 10
         }}
       >
-        {text}
+        {text}{children}
       </p>
     </>
   );

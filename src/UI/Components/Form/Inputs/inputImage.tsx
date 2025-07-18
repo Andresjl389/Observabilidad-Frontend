@@ -9,12 +9,10 @@ type Props = {
 
 const InputImageComponent = ({onImageUpload, text}:Props) => {
   const [image, setImage] = useState<string | null>(null);
-  const [filename, setFilename] = useState<string>("");
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
-      setFilename(file.name);
       
       const reader = new FileReader();
       reader.onloadend = () => {

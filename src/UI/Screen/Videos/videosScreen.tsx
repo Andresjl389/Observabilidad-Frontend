@@ -1,26 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Play,
-  Clock,
-  Users,
   BookOpen,
 } from "lucide-react";
 import { SearchComponent } from "../../Components/Table/Components";
 import { ButtonSelectComponent } from "../../Components/Table/Components/ButtonSelect";
 import { FooterCompoent, HeaderLoginComponent } from "../../Components";
+import { useAuth } from "../../../Context/Auth/AuthContext";
+import { GetVideos } from "../../../service";
+import { Videos } from "../../../interfaces/videos";
+import { toast } from "react-toastify";
 
-interface Video {
-  id: string;
-  title: string;
-  instructor: string;
-  duration: string;
-  thumbnail: string;
-}
 
 const VideosSection: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [itemsToShow, setItemsToShow] = useState<number>(5);
   const [page, setPage] = useState<number>(1);
+
+  const [videos, seVideos] = useState<Videos[]>([])
+  const { token } = useAuth()
 
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setItemsToShow(parseInt(event.target.value));
@@ -31,91 +29,31 @@ const VideosSection: React.FC = () => {
     setPage(1); // Reset to first page when searching
   };
 
-  const videos: Video[] = [
-    {
-      id: "#VID001",
-      title: "Introducción a GRP Observabilidad",
-      instructor: "Carlos Mendoza",
-      duration: "15:30",
-      thumbnail: "🎥",
-    },
-    {
-      id: "#VID002",
-      title: "Monitoreo Avanzado de Aplicaciones",
-      instructor: "María González",
-      duration: "28:45",
-      thumbnail: "📊",
-    },
-    {
-      id: "#VID003",
-      title: "Configuración de Alertas Inteligentes",
-      instructor: "Roberto Silva",
-      duration: "35:20",
-      thumbnail: "🔔",
-    },
-    {
-      id: "#VID004",
-      title: "Dashboard Creation Best Practices",
-      instructor: "Ana Rodríguez",
-      duration: "42:15",
-      thumbnail: "📈",
-    },
-    {
-      id: "#VID005",
-      title: "Troubleshooting con Logs",
-      instructor: "Diego Martín",
-      duration: "20:30",
-      thumbnail: "🔍",
-    },
-    {
-      id: "#VID006",
-      title: "Métricas Personalizadas",
-      instructor: "Patricia López",
-      duration: "33:10",
-      thumbnail: "📏",
-    },
-    {
-      id: "#VID007",
-      title: "Optimización de Performance",
-      instructor: "Luis García",
-      duration: "38:50",
-      thumbnail: "⚡",
-    },
-    {
-      id: "#VID008",
-      title: "Seguridad en Monitoreo",
-      instructor: "Carmen Torres",
-      duration: "25:15",
-      thumbnail: "🔒",
-    },
-    {
-      id: "#VID009",
-      title: "Integración con APIs",
-      instructor: "Miguel Herrera",
-      duration: "31:20",
-      thumbnail: "🔗",
-    },
-    {
-      id: "#VID010",
-      title: "Machine Learning en Observabilidad",
-      instructor: "Sandra Ruiz",
-      duration: "45:30",
-      thumbnail: "🤖",
-    },
-  ];
+  const handleVideos = useCallback(async () => {
+    try {
+      const response = await GetVideos(token);
+      seVideos(response);
+    } catch (error) {
+      toast.error(`Ocurrió un error al obtener los videos`)
+    }
+  }, [token]);
 
-  // Filter videos based on search term
-  const filteredVideos = videos.filter((video) => {
+    useEffect(() => {
+    handleVideos();
+  }, [handleVideos]);
+
+
+  const filteredVideos = videos?.filter((video) => {
     const matchesSearch =
       video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      video.instructor.toLowerCase().includes(searchTerm.toLowerCase());
+      video.description.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesSearch;
   });
 
   // Calculate pagination
   const startIndex = (page - 1) * itemsToShow;
-  const totalPages = Math.ceil(filteredVideos.length / itemsToShow);
-  const visibleRows = filteredVideos.slice(
+  const totalPages = Math.ceil(filteredVideos?.length / itemsToShow);
+  const visibleRows = filteredVideos?.slice(
     startIndex,
     startIndex + itemsToShow
   );
@@ -202,7 +140,7 @@ const VideosSection: React.FC = () => {
                       letterSpacing: "0.05em",
                     }}
                   >
-                    Video
+                    Título
                   </th>
                   <th
                     style={{
@@ -215,7 +153,7 @@ const VideosSection: React.FC = () => {
                       letterSpacing: "0.05em",
                     }}
                   >
-                    Instructor
+                    Descripción
                   </th>
                   <th
                     style={{
@@ -228,25 +166,12 @@ const VideosSection: React.FC = () => {
                       letterSpacing: "0.05em",
                     }}
                   >
-                    Duración
-                  </th>
-                  <th
-                    style={{
-                      padding: "15px",
-                      textAlign: "left",
-                      fontSize: "12px",
-                      fontWeight: "600",
-                      color: "#374151",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    Acción
+                    Visitar
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {visibleRows.map((video, index) => (
+                {visibleRows?.map((video, index) => (
                   <tr
                     key={video.id}
                     style={{
@@ -277,20 +202,7 @@ const VideosSection: React.FC = () => {
                           gap: "12px",
                         }}
                       >
-                        <div
-                          style={{
-                            width: "40px",
-                            height: "40px",
-                            borderRadius: "6px",
-                            backgroundColor: "#f3f4f6",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: "20px",
-                          }}
-                        >
-                          {video.thumbnail}
-                        </div>
+                        
                         <div>
                           <div
                             style={{
@@ -312,21 +224,7 @@ const VideosSection: React.FC = () => {
                         color: "#374151",
                       }}
                     >
-                      {video.instructor}
-                    </td>
-                    <td style={{ padding: "15px" }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "6px",
-                          fontSize: "14px",
-                          color: "#374151",
-                        }}
-                      >
-                        <Clock size={14} />
-                        {video.duration}
-                      </div>
+                      {video.description}
                     </td>
                     <td style={{ padding: "15px" }}>
                       <div style={{ display: "flex", gap: "8px" }}>
@@ -351,7 +249,7 @@ const VideosSection: React.FC = () => {
                           }}
                           title="Reproducir"
                           onClick={() =>
-                            console.log(`Reproducir video: ${video.title}`)
+                            window.open(video.link, "_blank")
                           }
                         >
                           <Play size={16} />
@@ -422,46 +320,8 @@ const VideosSection: React.FC = () => {
                     color: "#dc2626",
                   }}
                 >
-                  {videos.length}
+                  {videos?.length}
                 </p>
-              </div>
-            </div>
-          </div>
-
-          <div
-            style={{
-              backgroundColor: "white",
-              padding: "20px",
-              borderRadius: "8px",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "12px",
-                marginBottom: "10px",
-              }}
-            >
-              <div
-                style={{
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "8px",
-                  backgroundColor: "#f0fdf4",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#16a34a",
-                }}
-              >
-                <Users size={20} />
-              </div>
-              <div>
-                <h3 style={{ margin: 0, fontSize: "18px", color: "#1f2937" }}>
-                  Total Vistas
-                </h3>
               </div>
             </div>
           </div>
@@ -508,7 +368,7 @@ const VideosSection: React.FC = () => {
                     color: "#d97706",
                   }}
                 >
-                  {filteredVideos.length}
+                  {filteredVideos?.length}
                 </p>
               </div>
             </div>

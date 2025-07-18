@@ -14,12 +14,13 @@ import { ButtonSelectComponent } from "./Components/ButtonSelect";
 import { Info } from "../../../interfaces/info";
 import GetAll from "../../../service/info/getAll";
 import { IconContainerComponent } from "../ImagesContainer/IconComponent/IconsC";
-import { deleteInfo, GetTypes } from "../../../service";
+import { deleteInfo, GetTypes, UpdateInfo } from "../../../service";
 import { Types } from "../../../interfaces/types";
 import { SquarePen, Trash2 } from "lucide-react";
 import { useAuth } from "../../../Context/Auth/AuthContext";
 import { UUID } from "crypto";
-import { SuccessModal } from "../Modal";
+import { EditUserModalComponent, SuccessModal } from "../Modal";
+import { toast } from "react-toastify";
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
@@ -52,6 +53,46 @@ const TableComponent = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { token } = useAuth();
 
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+  const [selectedInfo, setSelectedInfo] = useState<Info | null>(null);
+
+  const handleCloseModal = () => {
+    setIsModalEditOpen(false);
+    setSelectedInfo(null);
+  };
+
+  const handleEditInfo = (info: Info) => {
+    setSelectedInfo(info);
+    setIsModalEditOpen(true);
+  };
+
+  const handleUpdateInfo = async (infoData: {
+    id: UUID;
+    type_id: string;
+    title: string;
+    description: string;
+    icon: string;
+    link: string;
+  }) => {
+    try {
+      const response = await UpdateInfo(token, infoData);
+      if (response?.status === 200 || response?.status === 201) {
+        toast.success("Información actualizada correctamente");
+        handleInfo();
+      } else {
+        toast.error("Error al actualizar la información");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error("Error al actualizar la información: " + error.message);
+      } else {
+        toast.error(
+          "Ocurrió un error inesperado al actualizar la información."
+        );
+      }
+    }
+  };
+
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setItemsToShow(parseInt(event.target.value));
   };
@@ -80,21 +121,21 @@ const TableComponent = () => {
   };
 
   const handleDelete = async (info_id: UUID) => {
-  try {
-    const response = await deleteInfo(token, info_id);
-    console.log(response)
+    try {
+      const response = await deleteInfo(token, info_id);
+      console.log(response);
 
-    if (response?.status === 200) {
-      setIsModalOpen(true);
-    } else {
-      console.error("Error al eliminar:", response);
-      // Aquí podrías mostrar un modal de error si tienes uno
+      if (response?.status === 200) {
+        setIsModalOpen(true);
+      } else {
+        console.error("Error al eliminar:", response);
+        // Aquí podrías mostrar un modal de error si tienes uno
+      }
+    } catch (error) {
+      console.error("Excepción en la eliminación:", error);
+      // Aquí también podrías mostrar un modal de error
     }
-  } catch (error) {
-    console.error("Excepción en la eliminación:", error);
-    // Aquí también podrías mostrar un modal de error
-  }
-};
+  };
 
   useEffect(() => {
     const fetchTypes = async () => {
@@ -162,7 +203,10 @@ const TableComponent = () => {
                   <StyledTableCell>{row.icon}</StyledTableCell>
                   <StyledTableCell>{row.link}</StyledTableCell>
                   <StyledTableCell>
-                    <SquarePen className="editIcon" />{" "}
+                    <SquarePen
+                      className="editIcon"
+                      onClick={() => handleEditInfo(row)}
+                    />{" "}
                     <Trash2
                       className="deleteIcon"
                       onClick={() => handleDelete(row.id)}
@@ -185,8 +229,16 @@ const TableComponent = () => {
         message="La información que eliminaste ya no estará publicada y visible para el equipo."
         onClose={() => {
           setIsModalOpen(false);
-          handleInfo()
+          handleInfo();
         }}
+      />
+
+      <EditUserModalComponent
+        isOpen={isModalEditOpen}
+        onClose={handleCloseModal}
+        info={selectedInfo}
+        onSave={handleUpdateInfo}
+        token={token}
       />
     </>
   );

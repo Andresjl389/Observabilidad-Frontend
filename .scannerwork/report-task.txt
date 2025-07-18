@@ -1,0 +1,6 @@
+projectKey=react-typescript-app
+serverUrl=http://localhost:9000
+serverVersion=25.7.0.110598
+dashboardUrl=http://localhost:9000/dashboard?id=react-typescript-app
+ceTaskId=8f11f5ab-e7af-4fec-a900-fd7a1d04e2c8
+ceTaskUrl=http://localhost:9000/api/ce/task?id=8f11f5ab-e7af-4fec-a900-fd7a1d04e2c8

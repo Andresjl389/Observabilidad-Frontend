@@ -11,6 +11,9 @@ import {
   Dashboard,
   Home,
   LoginPage,
+  ManageTokenScreen,
+  ManageUserScreen,
+  SignUpScreen,
   TableScreen,
   UserDepurationSection,
   VideosSection,
@@ -19,6 +22,8 @@ import {
 import PrivateRoute from "./PrivateRoute";
 import { Main } from "../UI/Screen/Main";
 import { AuthProvider, useAuth } from "../Context/Auth/AuthContext";
+import { ROLES } from "../utils/rolePermissions";
+import { RoleBasedRoute } from "../UI/Components";
 
 // Componente para el loader durante la carga
 const PageLoader = () => (
@@ -47,20 +52,78 @@ const AppRoutes: React.FC = () => {
           {/* Grupo de rutas públicas que redirigen a /main si está autenticado */}
           <Route element={<PublicRouteWrapper />}>
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<Home />} />
+            <Route path="/register" element={<SignUpScreen />} />
           </Route>
 
           {/* Rutas privadas que requieren autenticación */}
           <Route element={<PrivateRoute />}>
-            <Route path="/dashboards" element={<Dashboard />} />
-            <Route path="/main" element={<Main />} />
-            <Route path="/table-information" element={<TableScreen />} />
-            <Route path="/depuration" element={<UserDepurationSection />} />
+            {/* Rutas accesibles para usuarios y administradores */}
+            <Route
+              path="/main"
+              element={
+                <RoleBasedRoute allowedRoles={[ROLES.ADMIN, ROLES.USER]}>
+                  <Main />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/dashboards"
+              element={
+                <RoleBasedRoute allowedRoles={[ROLES.ADMIN, ROLES.USER]}>
+                  <Dashboard />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/videos"
+              element={
+                <RoleBasedRoute allowedRoles={[ROLES.ADMIN, ROLES.USER]}>
+                  <VideosSection />
+                </RoleBasedRoute>
+              }
+            />
+
+            {/* Rutas exclusivas para administradores */}
+            <Route
+              path="/table-information"
+              element={
+                <RoleBasedRoute allowedRoles={[ROLES.ADMIN]}>
+                  <TableScreen />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/depuration"
+              element={
+                <RoleBasedRoute allowedRoles={[ROLES.ADMIN]}>
+                  <UserDepurationSection />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/manage-users"
+              element={
+                <RoleBasedRoute allowedRoles={[ROLES.ADMIN]}>
+                  <ManageUserScreen />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/manage-token"
+              element={
+                <RoleBasedRoute allowedRoles={[ROLES.ADMIN]}>
+                  <ManageTokenScreen />
+                </RoleBasedRoute>
+              }
+            />
             <Route
               path="/add-information"
-              element={<AddInformationComponent />}
+              element={
+                <RoleBasedRoute allowedRoles={[ROLES.ADMIN]}>
+                  <AddInformationComponent />
+                </RoleBasedRoute>
+              }
             />
-            <Route path="/videos" element={<VideosSection />} />
           </Route>
 
           {/* Ruta para cualquier otra dirección no definida */}

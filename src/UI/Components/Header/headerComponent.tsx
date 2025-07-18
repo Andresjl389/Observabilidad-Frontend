@@ -1,7 +1,7 @@
 import { CommonText, TitleComponent } from "../Texts";
 import "../../../Assets/Styles/Components/Header/HeaderComponent.css";
 import { CommonButton } from "../Buttons";
-import logo from "../../../Assets/Images/icon.svg";
+import logo from "../../../Assets/Images/Logos.png";
 import { useNavigate } from "react-router-dom";
 
 type Props = {
@@ -20,15 +20,34 @@ const HeaderComponent = ({ Button, url, onNavigateToSection }: Props) => {
   return (
     <>
       <header className="header">
-        <div className="logo" >
-          <img className="logo-icon" src={logo} alt="logo-observabilidad" onClick={handleLogoClick} style={{cursor: 'pointer'}} />
-          <TitleComponent text="GRP Observabilidad" onClick={handleLogoClick} style={{cursor: 'pointer'}}/>
+        <div className="logo">
+          <img
+            className="logo-icon"
+            src={logo}
+            alt="logo-observabilidad"
+            onClick={handleLogoClick}
+            style={{ cursor: "pointer", width: 60, objectFit: "cover" }}
+          />
+          <TitleComponent
+            text="GRP Observabilidad"
+            onClick={handleLogoClick}
+            style={{ cursor: "pointer" }}
+          />
         </div>
 
         <div className="linkButton">
-          <CommonText text="Herramientas" onClick={() => onNavigateToSection?.("stack")} />
-          <CommonText text="Información relevante" onClick={() => onNavigateToSection?.("info")} />
-          <CommonText text="Visitar páginas" onClick={() => onNavigateToSection?.("pages")}/>
+          <CommonText
+            text="Herramientas"
+            onClick={() => onNavigateToSection?.("stack")}
+          />
+          <CommonText
+            text="Información relevante"
+            onClick={() => onNavigateToSection?.("info")}
+          />
+          <CommonText
+            text="Visitar páginas"
+            onClick={() => onNavigateToSection?.("pages")}
+          />
         </div>
         {Button && (
           <div className="aboutUs">

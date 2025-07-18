@@ -1,6 +1,5 @@
-
-import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Calendar, X } from "lucide-react";
+import React, { useState } from "react";
+import { ChevronLeft, ChevronRight, Calendar, X, Check } from "lucide-react";
 
 interface DateRange {
   startDate: Date | null;
@@ -9,17 +8,22 @@ interface DateRange {
 
 interface DateRangeCalendarProps {
   onDateRangeChange?: (range: DateRange) => void;
+  onAccept?: (range: DateRange) => void;
   initialRange?: DateRange;
   compact?: boolean;
 }
 
 const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
   onDateRangeChange,
+  onAccept,
   initialRange,
   compact = false,
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedRange, setSelectedRange] = useState<DateRange>(
+    initialRange || { startDate: null, endDate: null }
+  );
+  const [tempRange, setTempRange] = useState<DateRange>(
     initialRange || { startDate: null, endDate: null }
   );
   const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
@@ -66,14 +70,14 @@ const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
   };
 
   const isInRange = (date: Date): boolean => {
-    const { startDate, endDate } = selectedRange;
+    const { startDate, endDate } = tempRange;
     if (!startDate || !endDate) return false;
     return date >= startDate && date <= endDate;
   };
 
   const isInHoverRange = (date: Date): boolean => {
-    const { startDate } = selectedRange;
-    if (!startDate || !hoveredDate || selectedRange.endDate) return false;
+    const { startDate } = tempRange;
+    if (!startDate || !hoveredDate || tempRange.endDate) return false;
 
     const start = startDate < hoveredDate ? startDate : hoveredDate;
     const end = startDate < hoveredDate ? hoveredDate : startDate;
@@ -82,37 +86,53 @@ const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
   };
 
   const isRangeStart = (date: Date): boolean => {
-    return selectedRange.startDate?.toDateString() === date.toDateString();
+    return tempRange.startDate?.toDateString() === date.toDateString();
   };
 
   const isRangeEnd = (date: Date): boolean => {
-    return selectedRange.endDate?.toDateString() === date.toDateString();
+    return tempRange.endDate?.toDateString() === date.toDateString();
   };
 
   const handleDateClick = (date: Date) => {
-    if (!selectedRange.startDate || (selectedRange.startDate && selectedRange.endDate)) {
+    if (!tempRange.startDate || (tempRange.startDate && tempRange.endDate)) {
       const newRange = { startDate: date, endDate: null };
-      setSelectedRange(newRange);
-      onDateRangeChange?.(newRange);
+      setTempRange(newRange);
     } else {
-      const startDate = selectedRange.startDate;
+      const startDate = tempRange.startDate;
       const endDate = date;
 
       const finalRange = startDate <= endDate
         ? { startDate, endDate }
         : { startDate: endDate, endDate: startDate };
 
-      setSelectedRange(finalRange);
-      onDateRangeChange?.(finalRange);
-      
-      if (compact) {
-        setIsOpen(false);
-      }
+      setTempRange(finalRange);
     }
   };
 
-  const formatDateRange = (): string => {
-    const { startDate, endDate } = selectedRange;
+  const handleAccept = () => {
+    setSelectedRange(tempRange);
+    onDateRangeChange?.(tempRange);
+    onAccept?.(tempRange);
+    
+    if (compact) {
+      setIsOpen(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setTempRange(selectedRange);
+    if (compact) {
+      setIsOpen(false);
+    }
+  };
+
+  const handleClear = () => {
+    const emptyRange = { startDate: null, endDate: null };
+    setTempRange(emptyRange);
+  };
+
+  const formatDateRange = (range: DateRange = selectedRange): string => {
+    const { startDate, endDate } = range;
     if (!startDate) return "Seleccionar fechas";
 
     const formatDate = (date: Date) => {
@@ -129,6 +149,8 @@ const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
 
     return `${formatDate(startDate)} - ${formatDate(endDate)}`;
   };
+
+  const isRangeComplete = tempRange.startDate && tempRange.endDate;
 
   const days = getDaysInMonth(currentDate);
 
@@ -235,22 +257,50 @@ const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
     },
     footerContent: {
       display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
+      flexDirection: "column" as const,
+      gap: "12px",
     },
     rangeDisplay: {
       fontSize: "13px",
       color: "#6b7280",
+      textAlign: "center" as const,
+    },
+    buttonGroup: {
+      display: "flex",
+      gap: "8px",
+      justifyContent: "flex-end",
+    },
+    button: {
+      padding: "8px 16px",
+      fontSize: "13px",
+      fontWeight: "500",
+      border: "none",
+      borderRadius: "8px",
+      cursor: "pointer",
+      transition: "all 0.2s ease",
+      display: "flex",
+      alignItems: "center",
+      gap: "6px",
     },
     clearButton: {
       fontSize: "12px",
       color: "#dc2626",
       backgroundColor: "transparent",
-      border: "none",
+      border: "1px solid #fecaca",
       cursor: "pointer",
-      padding: "4px 8px",
+      padding: "6px 12px",
       borderRadius: "6px",
       transition: "all 0.2s ease",
+    },
+    cancelButton: {
+      backgroundColor: "#f3f4f6",
+      color: "#6b7280",
+      border: "1px solid #d1d5db",
+    },
+    acceptButton: {
+      backgroundColor: "#3b82f6",
+      color: "#ffffff",
+      border: "1px solid #3b82f6",
     },
     overlay: {
       position: "fixed" as const,
@@ -353,12 +403,72 @@ const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
       <div style={baseStyles.footer}>
         <div style={baseStyles.footerContent}>
           <div style={baseStyles.rangeDisplay}>
-            {selectedRange.startDate && selectedRange.endDate 
-              ? `${formatDateRange()}` 
-              : selectedRange.startDate 
+            {tempRange.startDate && tempRange.endDate 
+              ? `${formatDateRange(tempRange)}` 
+              : tempRange.startDate 
                 ? "Selecciona fecha final" 
                 : "Selecciona fechas"
             }
+          </div>
+          
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <button
+              onClick={handleClear}
+              style={baseStyles.clearButton}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#fef2f2";
+                e.currentTarget.style.borderColor = "#fca5a5";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.borderColor = "#fecaca";
+              }}
+            >
+              Limpiar
+            </button>
+            
+            <div style={baseStyles.buttonGroup}>
+              <button
+                onClick={handleCancel}
+                style={{
+                  ...baseStyles.button,
+                  ...baseStyles.cancelButton,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#e5e7eb";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#f3f4f6";
+                }}
+              >
+                <X size={14} />
+                Cancelar
+              </button>
+              
+              <button
+                onClick={handleAccept}
+                disabled={!isRangeComplete}
+                style={{
+                  ...baseStyles.button,
+                  ...baseStyles.acceptButton,
+                  opacity: !isRangeComplete ? 0.5 : 1,
+                  cursor: !isRangeComplete ? "not-allowed" : "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  if (isRangeComplete) {
+                    e.currentTarget.style.backgroundColor = "#2563eb";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (isRangeComplete) {
+                    e.currentTarget.style.backgroundColor = "#3b82f6";
+                  }
+                }}
+              >
+                <Check size={14} />
+                Aceptar
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -369,7 +479,10 @@ const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
     return (
       <div style={baseStyles.container}>
         <button
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => {
+            setTempRange(selectedRange);
+            setIsOpen(!isOpen);
+          }}
           style={{
             ...baseStyles.trigger,
             borderColor: isOpen ? "#3b82f6" : "#e5e7eb",
@@ -422,4 +535,4 @@ const DateRangeCalendar: React.FC<DateRangeCalendarProps> = ({
   );
 };
 
-export default DateRangeCalendar
+export default DateRangeCalendar;

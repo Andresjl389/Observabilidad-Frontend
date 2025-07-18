@@ -14,7 +14,7 @@ import "../../../Assets/Styles/UI/Home/main.css";
 import firstImg from "../../../Assets/Images/first.svg";
 import { GetInfo, GetTypes } from "../../../service";
 import { Info } from "../../../interfaces/info";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Types } from "../../../interfaces/types";
 import { IconContainerComponent } from "../../Components/ImagesContainer/IconComponent/IconsC";
 
@@ -25,9 +25,58 @@ const Home = () => {
   const [stack, setstack] = useState<Info[]>([]);
   const [types, setTypes] = useState<Types[]>([]);
 
+  const getId = useCallback(
+    (name: string) => {
+      let id: string = "";
+      types.forEach((type) => {
+        if (type.name === name) {
+          id = type.id;
+        }
+      });
+      return id;
+    },
+    [types]
+  );
+
+  const handleCardImageInfo = useCallback(async () => {
+    const id = getId("Tarjeta con imagen");
+    const data = await GetInfo(id);
+    setcardImageInfo(data);
+  }, [getId]);
+
+  const handleInfo = useCallback(async () => {
+    const id = getId("Información relevante");
+    const data = await GetInfo(id);
+    setInfo(data);
+  }, [getId]);
+
+  const handleCardInfo = useCallback(async () => {
+    const id = getId("Información herramientas observabilidad");
+    const data = await GetInfo(id);
+    setCardInfo(data);
+  }, [getId]);
+
+  const handleStack = useCallback(async () => {
+    const id = getId("Herramientas observabilidad");
+    const data = await GetInfo(id);
+    setstack(data);
+  }, [getId]);
+
+  const handleInfoType = useCallback(async () => {
+    const data = await GetTypes();
+    setTypes(data);
+  }, []);
+
+  const handleScrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   useEffect(() => {
     handleInfoType();
-  }, []);
+  }, [handleInfoType]);
 
   useEffect(() => {
     if (types?.length > 0) {
@@ -36,50 +85,7 @@ const Home = () => {
       handleCardInfo();
       handleStack();
     }
-  }, [types]);
-
-  const getId = (name: string) => {
-    let id: string = "";
-    types.forEach((type) => {
-      if (type.name === name) {
-        id = type.id;
-      }
-    });
-    return id;
-  };
-
-  const handleCardImageInfo = async () => {
-    const id = getId("Tarjeta con imagen");
-    const data = await GetInfo(id);
-    setcardImageInfo(data);
-  };
-  const handleInfo = async () => {
-    const id = getId("Información relevante");
-    const data = await GetInfo(id);
-    setInfo(data);
-  };
-  const handleCardInfo = async () => {
-    const id = getId("Información herramientas observabilidad");
-    const data = await GetInfo(id);
-    setCardInfo(data);
-  };
-  const handleStack = async () => {
-    const id = getId("Herramientas observabilidad");
-    const data = await GetInfo(id);
-    setstack(data);
-  };
-
-  const handleInfoType = async () => {
-    const data = await GetTypes();
-    setTypes(data);
-  };
-
-  const handleScrollToSection = (sectionId: string) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  }, [types, handleInfo, handleCardImageInfo, handleCardInfo, handleStack]);
 
   return (
     <>
@@ -120,7 +126,7 @@ const Home = () => {
       )}
 
       {cardInfo?.length > 0 && (
-        <section className="infoSection">
+        <section className="infoSection" id="stack">
           <div className="titleInfoContainer">
             <TextSemiBoldComponent text="Información" size={25} weight="600" />
             <CommonText text="Conoce más sobre nuestras plataformas y cómo funcionan" />

@@ -2,7 +2,7 @@ import { environment } from "../../../environment/local";
 import axios from "axios";
 
 
-const GetTimes = async(token: string | null, startDate: string | undefined , endDate: string | undefined) => {
+const GetTimes = async(token: string | null, startDate: string | undefined , endDate: string | undefined, isDavicom: boolean) => {
     try {
         const headers = { 
             "content-type": "application/json",
@@ -11,6 +11,7 @@ const GetTimes = async(token: string | null, startDate: string | undefined , end
         const params = {
             "start_date": startDate,
             "end_date": endDate,
+            "is_davicom": isDavicom
         }
         const response = await axios.get(`${environment.app_url}/time-to-login`, {
             headers,

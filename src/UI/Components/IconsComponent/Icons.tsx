@@ -1,5 +1,4 @@
 // Icons.jsx
-import React from 'react';
 
 export function IconCalendar(props:any) {
   return (

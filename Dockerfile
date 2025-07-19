@@ -4,7 +4,10 @@ FROM node:18-alpine AS build
 WORKDIR /app
 COPY . .
 
-# Usa la configuración de producción
+# Define un argumento de build
+ARG REACT_APP_API_URL
+
+# Exporta como variable de entorno para que React pueda leerla
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
 RUN npm install && npm run build

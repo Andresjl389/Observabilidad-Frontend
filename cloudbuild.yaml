@@ -1,0 +1,12 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'build',
+        '-t', 'gcr.io/$PROJECT_ID/mi-frontend',
+        '--build-arg', 'REACT_APP_API_URL=https://observabilidad-194225173776.europe-west1.run.app',
+        '.'
+      ]
+
+images:
+  - 'gcr.io/$PROJECT_ID/mi-frontend'
